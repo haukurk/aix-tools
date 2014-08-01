@@ -67,22 +67,26 @@ filesystem_stats(){
 
 
 VGS="$( lsvg )"
+FSCNT="$( lsvg | wc -l )" 
 for VG in $VGS; do 
         _VGSTATS=$( stats_for_volume_group_mb $VG )
         _VGFREE=$( echo $_VGSTATS | awk -F" " {'print $3'} | awk -F":" {'print $2'} ) 
         _VGTOTAL=$( echo $_VGSTATS | awk -F" " {'print $1'} | awk -F":" {'print $2'} ) 
         _VGUSED=$( echo $_VGSTATS | awk -F" " {'print $2'} | awk -F":" {'print $2'} )
         echo "# Volume group statistics for $VG:"
-        echo " Total: $_VGTOTAL MB"
-        echo " Used: $_VGUSED MB"
-        echo " Free: $_VGFREE MB"
+        echo "  Total: $_VGTOTAL MB"
+        echo "  Used: $_VGUSED MB"
+        echo "  Free: $_VGFREE MB"
         echo ""
-        echo " Filesystems using $VG:"
-        for FS in $(filesystems_in_a_volumegroup $VG); do
+        echo "  Filesystems using $VG:"
+		FSS=$(filesystems_in_a_volumegroup $VG)
+        for FS in $FSS; do
                 _FSSTATS=$( filesystem_stats $FS )
                 _FSTOTAL=$( echo $_FSSTATS | awk -F" " {'print $1'} | awk -F":" {'print $2'} ) 
                 _FSFREE=$( echo $_FSSTATS | awk -F" " {'print $2'} | awk -F":" {'print $2'} ) 
-                echo " $FS -> Total: $_FSTOTAL MB, Free: $_FSFREE MB"    
+                echo "  $FS -> Total: $_FSTOTAL MB, Free: $_FSFREE MB"    
         done
+		FSCNT="$( echo $FSS | wc -l )" 
+		if [[ $value -lt 1 ]];then print "  * No filesystems.";fi
 		echo ""
 done
