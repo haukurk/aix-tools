@@ -77,11 +77,12 @@ for VG in $VGS; do
         echo "Used: $_VGUSED MB"
         echo "Free: $_VGFREE MB"
         echo ""
-        echo "# Filesystems using $VG:"
+        echo "Filesystems using $VG:"
         for FS in $(filesystems_in_a_volumegroup $VG); do
                 _FSSTATS=$( filesystem_stats $FS )
                 _FSTOTAL=$( echo $_FSSTATS | awk -F" " {'print $1'} | awk -F":" {'print $2'} ) 
                 _FSFREE=$( echo $_FSSTATS | awk -F" " {'print $2'} | awk -F":" {'print $2'} ) 
                 echo "$FS -> Total: $_FSTOTAL MB, Free: $_FSFREE MB"    
         done
+		echo ""
 done
