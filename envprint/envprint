@@ -1,0 +1,7 @@
+#!/usr/bin/ksh
+IFS=':'
+for ii in $PATH
+do
+        echo $ii
+done
+# end of file

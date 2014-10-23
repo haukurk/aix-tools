@@ -1,0 +1,27 @@
+#!/bin/ksh
+
+#  Author - Haukur 
+#  Usage: see usage() function, below
+
+usage(){
+        print collect-statspak - automate statspak collecting with cron. 
+        print "usage: collect-statspake [user] [pass]"
+}
+
+if [ $# -lt 1 ] ; then
+        usage
+        print ERROR: no user or pass defined. 
+        exit 1
+fi
+
+source /home/oracle/.bash_profile
+
+sqlplus /nolog <<EOF
+
+connect $1/$2
+
+execute statspack.snap(I_SNAP_LEVEL=>10);
+
+exit
+
+EOF
