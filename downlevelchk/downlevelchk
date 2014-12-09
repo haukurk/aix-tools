@@ -1,0 +1,24 @@
+#!/usr/bin/ksh
+
+echo "Checking oslevel..."
+curr_oslevel=`oslevel -s`
+
+if [ "`oslevel -sq 2>/dev/null | sed -n '1p'`" = "$curr_oslevel" ]; then
+        echo "oslevel appears to be correct:  $curr_oslevel"
+        exit 0
+fi
+
+if [ "`oslevel -rq 2>/dev/null | sed -n '1p'`" = "`oslevel -r`" ]; then
+        echo "Current SP level appears to be downlevel"
+        echo "oslevel -s:     $curr_oslevel"
+        echo "oslevel -s -q:  `oslevel -sq 2>/dev/null | sed -n '1p'`"
+        echo; echo "Check the following filesets:"
+        oslevel -s -l `oslevel -sq 2>/dev/null | sed -n '1p'`
+else
+        echo "Current TL level appears to be downlevel"
+        echo "oslevel -r:     `oslevel -r`"
+        echo "oslevel -r -q:  `oslevel -rq 2>/dev/null | sed -n '1p'`"
+        echo; echo "Check the following filesets:"
+        oslevel -r -l `oslevel -rq 2>/dev/null | sed -n '1p'`
+fi
+ 
