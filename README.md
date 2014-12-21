@@ -7,3 +7,4 @@ Current list of tools in the repository:
 * *envprint*, quickly list env variables, in a easy reading format.
 * *collect-statspak*, automate statspak snapshots with cron instead of oracle scheduler.
 * *downlevelchk*, check downlevel filesets.
+* *svc_report*, match hdisks with UID volumes names in SVC (Storage volume controller).

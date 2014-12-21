@@ -1,0 +1,33 @@
+#!/usr/bin/ksh 
+if ! [ `whoami` = "root" ]; then 
+echo "Script must be run as root" 
+exit 3 
+fi 
+
+if [ -n "$1" ]; then 
+if [ -e "$1" ]; then 
+svcinfo=`cat "$1"` 
+else
+svcinfo=`ssh $1 lshostvdiskmap` 
+fi 
+else 
+echo "Specify filename with SVC lshostvdiskmap output in it" 
+echo "OR specify username@svchost to retrive info from SVC through SSH" 
+echo "example: $0 /path/to/lshostvdiskmap_output" 
+echo "example: $0 user@svc1" 
+exit 1
+fi 
+
+if ! [ -n "$svcinfo" ]; then 
+echo "Error: Unable to retrieve SVC info" 
+exit 2 
+fi 
+printf  "AIX_Host_Name   AIX_hdisk  AIX_VG       SIZE_MB    "
+echo "id SVC_AIX_host  SCSI_id vdisk_id SVC_vdisk_name             SVC_vdisk_UID"
+pcmpath query device | egrep "^DEV|^SERIAL" | paste - - | 
+awk '{print $5 " " $12}' | while read disk serial; do 
+vg=`lspv | grep "^$disk " | awk '{print $3}'` 
+size=`getconf DISK_SIZE /dev/$disk` 
+printf "%-15s %-10s %-12s %-10s " `hostname -s` $disk $vg $size 
+echo "$svcinfo" | grep "$serial *$" || echo "Not found on SVC: $serial" 
+done
